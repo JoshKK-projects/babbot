@@ -48,11 +48,3 @@ def PickATrend(location):
 	trend = random.choice(trends)
 	getTrendingTweetsByTrend(trend)
 
-# print getAllUserTwits('ryanpaugh')
-# bob=api.get_user('RobertCalise')
-# print bob
-# getAllUserTwits(bob)
-# print alltwits
-# alltwits=api.user_timeline(screen_name='RobertCalise',count=200)
-# print bob
-# api.search('boston')
