@@ -2,7 +2,7 @@
 import re, redis, ast,HTMLParser, config
 r = config.r
 h=HTMLParser.HTMLParser()
-
+#longer chains, (a,b,c):d for more accurate stuff
 def readInData(user,data):
 	chains = r.get(user+'_mainchains')#user or textsource really
 	if chains==None:
@@ -13,18 +13,26 @@ def readInData(user,data):
 	chains_plus_additions = joiner(data,chains,True)
 	r.set(user+'_mainchains',str(chains_plus_additions))
 
-def joiner(tweets,chain_dic,allow_dupes=False):
+def joiner(tweets,chain_dic,allow_dupes=True):
 	sentances = ['<start> ' +h.unescape(unicode(tweet.lower(),'utf-8'))+' <stop>' for tweet in tweets if tweet.split()>2]
 	for sentance in sentances:
 		sentance = re.sub(r"@.*?\s",'',sentance)
 		tweets = sentance.split()
-		for i in range(0,len(tweets)-2):
+		for i in range(0,len(tweets)-2):#creates (a,b):c format
 			key = (tweets[i],tweets[i+1])
 			value = tweets[i+2]
 			if key in chain_dic and  value!='@' and (value not in chain_dic[key] or allow_dupes):
 				chain_dic[key].append(value)
 			elif value!= '@':
 				chain_dic[key] = [value]
+		for i in range(0,len(tweets)-3):#creates (a,b,c):d
+			key = (tweets[i],tweets[i+1],tweets[i+2])
+			value = tweets[i+3]
+			if key in chain_dic and  value!='@' and (value not in chain_dic[key] or allow_dupes):
+				chain_dic[key].append(value)
+			elif value!= '@':
+				chain_dic[key] = [value]
+
 	return chain_dic
 def combineChains(chainArr,key_name):
 	chains = []
