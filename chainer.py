@@ -1,6 +1,8 @@
 #http://charlesleifer.com/blog/building-markov-chain-irc-bot-python-and-redis/
-import re, redis, ast
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+import re, redis, ast,HTMLParser, config
+r = config.r
+h=HTMLParser.HTMLParser()
+
 def readInData(user,data):
 	chains = r.get(user+'_mainchains')#user or textsource really
 	if chains==None:
@@ -12,7 +14,7 @@ def readInData(user,data):
 	r.set(user+'_mainchains',str(chains_plus_additions))
 
 def joiner(tweets,chain_dic,allow_dupes=False):
-	sentances = ['<start> ' +tweet+' <stop>' for tweet in tweets]
+	sentances = ['<start> ' +h.unescape(unicode(tweet.lower(),'utf-8'))+' <stop>' for tweet in tweets if tweet.split()>2]
 	for sentance in sentances:
 		sentance = re.sub(r"@.*?\s",'',sentance)
 		tweets = sentance.split()
@@ -42,7 +44,6 @@ def combineChains(chainArr,key_name):
 	r.set(key_name+'_mainchains',str(add_to))
 
 def getChains():
-	chains = []
-	chains.append([key for key in r.scan_iter('*_mainchains')])
+	chains = [k for k in r.scan_iter('*_mainchains')]	
 	return chains
-combineChains(['ryanpaugh','RobertCalise'],'Rybob')#both better exist, i think you wanna put the big one first
+# combineChains(['ryanpaugh','RobertCalise'],'Rybob')#both better exist, i think you wanna put the big one first

@@ -5,3 +5,4 @@ postTweet.py
 *.gz
 */
 *.rdb
+*.txt

@@ -1,5 +1,6 @@
-import redis, ast,random
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+import redis, ast,random,getStatuses,config,time
+r = config.r
+api = config.api
 
 def compTweets(user_name,num):
 	chain=ast.literal_eval(r.get(user_name+'_mainchains'))#or file,whatever
@@ -26,5 +27,23 @@ def compTweets(user_name,num):
 			tweets.append(tweet)
 	return tweets
 
-for i in compTweets('Rybob',100):
-	print i
+def postTweets(profile):
+	while(1):
+		tweet = compTweets(profile,1)[0][:-7]
+		print "Attempting tweet: "
+		trim_tweet = tweet[:140]
+		print len(tweet)
+		print trim_tweet
+		time.sleep(5)
+		api.update_status(status=trim_tweet)
+		time.sleep(60*1)
+
+# def cursorHandler(cursor):
+# 	while True:
+# 		try:
+# 			yeild cursor.next()
+# 		except tweepy.RateLimitError:
+# 			time.sleep(15*60)
+
+# for i in compTweets('NeuroBob',100):
+# 	print i

@@ -1,16 +1,13 @@
 #https://gist.github.com/yanofsky/5436496
-import tweepy
-import config as cfg
-import chainer 
-import redis 
-import ast
-import random
+import tweepy, config, chainer, redis, ast, random, time, compose_tweet,config
+r = config.r
+api = config.api
 
-r = redis.Redis(host='localhost', port=6379, db=0)
-# r = redis.StrictRedis(host='localhost', port=6379, db=0)
-auth = tweepy.OAuthHandler(cfg.creds['consumer_key'], cfg.creds['consumer_secret'])
-auth.set_access_token(cfg.creds['access_token'], cfg.creds['access_token_secret'])
-api = tweepy.API(auth)
+
+# r = redis.Redis(host='localhost', port=6379, db=0)
+# auth = tweepy.OAuthHandler(cfg.creds['consumer_key'], cfg.creds['consumer_secret'])
+# auth.set_access_token(cfg.creds['access_token'], cfg.creds['access_token_secret'])
+# api = tweepy.API(auth)
 
 def getAllUserTwits(user_name):
 	twitlist = []
@@ -34,26 +31,24 @@ def getTrendingByLocation(location):#array give
 	query = r.get(location+'_Trends')
 	if query != None:
 		return ast.literal_eval(query)
-	
+
+	apiSetTrendingLocations()
 	woeid =  r.get('Trend_'+location)
 	trends = api.trends_place(woeid)
-	query = []
-	for trend in trends[0]['trends']:
-		 query.append(trend['query'][3:])
+	query = [t['query'] for t in trends[0]['trends']]
+	# for trend in trends[0]['trends']:
+	# 	 query.append(trend['query'][3:])
 	r.setex(location+'_Trends', query, 6000)
 	return query
-
 def getTrendingTweetsByTrend(trend):
 	for tweet in tweepy.Cursor(api.search, q=trend,show_user=True).items(100):
 		print tweet.text
-def PickATrend():
-	trends = getTrendingByLocation('United States')
+def PickATrend(location):
+	trends = getTrendingByLocation(location)
 	trend = random.choice(trends)
-	print "picking trend " + trend
 	getTrendingTweetsByTrend(trend)
 
-
-print getAllUserTwits('ryanpaugh')
+# print getAllUserTwits('ryanpaugh')
 # bob=api.get_user('RobertCalise')
 # print bob
 # getAllUserTwits(bob)
