@@ -46,4 +46,3 @@ def combineChains(chainArr,key_name):
 def getChains():
 	chains = [k for k in r.scan_iter('*_mainchains')]	
 	return chains
-# combineChains(['ryanpaugh','RobertCalise'],'Rybob')#both better exist, i think you wanna put the big one first

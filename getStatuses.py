@@ -4,11 +4,6 @@ r = config.r
 api = config.api
 
 
-# r = redis.Redis(host='localhost', port=6379, db=0)
-# auth = tweepy.OAuthHandler(cfg.creds['consumer_key'], cfg.creds['consumer_secret'])
-# auth.set_access_token(cfg.creds['access_token'], cfg.creds['access_token_secret'])
-# api = tweepy.API(auth)
-
 def getAllUserTwits(user_name):
 	twitlist = []
 	print user_name
