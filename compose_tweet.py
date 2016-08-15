@@ -15,7 +15,11 @@ def compTweets(user_name,num):
 			nextTouple = comparePast(chain,key_pair,3,tweet)
 			key_pair = nextTouple[0]
 			next_pick = nextTouple[1]
-			tweet+=' '+next_pick
+			hashify = random.choice(range(1,21))
+			append = next_pick
+			if(hashify>17 and len(next_pick)>3):
+				append = '#'+append
+			tweet+=' '+append
 		if(len(tweet)>45):
 			tweets.append(tweet)
 	return tweets
@@ -51,7 +55,7 @@ def postTweets(profile):
 		print trim_tweet
 		time.sleep(5)
 		api.update_status(status=trim_tweet)
-		time.sleep(60*60)
+		time.sleep(60*5)
 
 # def cursorHandler(cursor):
 # 	while True:

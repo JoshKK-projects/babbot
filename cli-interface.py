@@ -11,18 +11,22 @@ options = {
     '4': lambda : '\n'.join([p for p in  getStatuses.getTrendingByLocation(raw_input())])+sep,
     '5': lambda : '\n'.join([p for p in compose_tweet.compTweets(raw_input(),input())])+sep, 
     '6': lambda : compose_tweet.postTweets(raw_input()),
-    '7': lambda : readTextFile.readFile(raw_input())
+    '7': lambda : readTextFile.readFile(raw_input()),
+    '8': lambda : getStatuses.getAllUserTwits(raw_input()),
+    '9': lambda : chainer.combineChains(raw_input(),raw_input(),raw_input())
 }
 print 'Starting'
 while command != 'exit':
    	print """Commands:
-Get Bot Personalities:1<enter>
+Get Personalities:1<enter>
 Get Trend Locations:2<enter>
 Populate Trend Locations:3<enter>
 Get Trending At Location:4<enter><arg><enter>
 Compose Tweet:5<enter><user_arg><enter><number_tweets><enter>
 Auto Post Tweets For Profile:6<enter><arg><enter>
 Read In Text File To Create Profile:7<enter><arg><enter>
+Get All Tweets For User:8<enter><arg><enter>
+Combine Personalities:9<enter><personality><enter><personality><enter><new_user><enter>
 Exit:exit"""+sep
    	command = raw_input()
    	if(command in options):

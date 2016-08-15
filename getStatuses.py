@@ -6,11 +6,18 @@ api = config.api
 
 def getAllUserTwits(user_name):
 	twitlist = []
-	print user_name
-	for status in tweepy.Cursor(api.user_timeline, screen_name=user_name).items():
+	for status in limiter(tweepy.Cursor(api.user_timeline, screen_name=user_name).items()):#handle for api limit
+		print "gotten " , len(twitlist)
+		print status.text.lower()
 		twitlist.append(status.text.lower())
 	chainer.readInData(user_name,twitlist)
-
+def limiter(cursor):
+	while True:
+		try:
+			yield cursor.next()
+		except tweepy.TweepError:
+			print 'waiting'
+			time.sleep(15*60)
 def getFollowers(user):
 	followers = []
 	for follower in tweepy.Cursor(api.friends, screen_name=user.screen_name).items():

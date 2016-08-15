@@ -5,16 +5,17 @@ h=HTMLParser.HTMLParser()
 #longer chains, (a,b,c):d for more accurate stuff
 def readInData(user,data):
 	chains = r.get(user+'_mainchains')#user or textsource really
+	print "tweetnum: ",len(data)
 	if chains==None:
 		chains = {}
 	else:
 		chains = ast.literal_eval(chains)
-	
+
 	chains_plus_additions = joiner(data,chains,True)
 	r.set(user+'_mainchains',str(chains_plus_additions))
 
 def joiner(tweets,chain_dic,allow_dupes=True):
-	sentances = ['<start> ' +h.unescape(unicode(tweet.lower(),'utf-8'))+' <stop>' for tweet in tweets if tweet.split()>2]
+	sentances = ['<start> ' +tweet+' <stop>' for tweet in tweets if tweet.split()>2]
 	for sentance in sentances:
 		sentance = re.sub(r"@.*?\s",'',sentance)
 		tweets = sentance.split()
@@ -34,22 +35,20 @@ def joiner(tweets,chain_dic,allow_dupes=True):
 				chain_dic[key] = [value]
 
 	return chain_dic
-def combineChains(chainArr,key_name):
-	chains = []
-	for key in chainArr:
-		obj = r.get(key+'_mainchains')
-		chains.append((obj,{})[obj==None])
-	add_to = ast.literal_eval(chains[0])
-	for chain in chains[1:]:
-		chain = ast.literal_eval(chain)
-		keys = chain.keys()
-		for key in keys:
-			print 'checking ',key
-			if key in add_to.keys():
-				add_to[key].append(chain[key])
-			else:
-				add_to[key] = chain[key]
-	r.set(key_name+'_mainchains',str(add_to))
+
+def combineChains(key_name1,key_name2,new_profile):
+	obj1 = ast.literal_eval(r.get(key_name1+'_mainchains'))	
+	obj2 = ast.literal_eval(r.get(key_name2+'_mainchains'))
+	keys1 = obj1.keys()
+	keys2 = obj2.keys()	
+	for key in keys2:
+		print 'checking ',key
+		if key in keys1:
+			obj1[key].append(obj2[key])
+		else:
+			obj1[key] = obj2[key]
+	r.set(new_profile+'_mainchains',str(obj1))
+
 
 def getChains():
 	chains = [k for k in r.scan_iter('*_mainchains')]	
