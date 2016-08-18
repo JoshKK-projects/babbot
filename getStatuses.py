@@ -1,5 +1,5 @@
 #https://gist.github.com/yanofsky/5436496
-import tweepy, config, chainer, redis, ast, random, time, compose_tweet,config
+import tweepy, chainer, ast, random, time,config,synsets
 r = config.r
 api = config.api
 
@@ -10,7 +10,9 @@ def getAllUserTwits(user_name):
 		print "gotten " , len(twitlist)
 		print status.text.lower()
 		twitlist.append(status.text.lower())
-	chainer.readInData(user_name,twitlist)
+	posses = synsets.synoms(twitlist)
+	chainer.readInPOSData(user_name,posses)
+	# chainer.readInData(user_name,twitlist)
 def limiter(cursor):
 	while True:
 		try:
@@ -22,7 +24,7 @@ def getFollowers(user):
 	followers = []
 	for follower in tweepy.Cursor(api.friends, screen_name=user.screen_name).items():
 		followers.append(follower)
-	return friend
+	return followers
 
 def apiSetTrendingLocations():
 	trends = api.trends_available()

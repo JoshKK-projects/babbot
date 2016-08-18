@@ -3,8 +3,11 @@ import re, redis, ast,HTMLParser, config
 r = config.r
 h=HTMLParser.HTMLParser()
 #longer chains, (a,b,c):d for more accurate stuff
-def readInData(user,data):
-	chains = r.get(user+'_mainchains')#user or textsource really
+def readInData(user,data,pos=False,pos_len=False):
+	if not pos:
+		chains = r.get(user+'_mainchains')#user or textsource really
+	else:
+		chains = r.get(user + '_poschains_'+str(pos_len))
 	print "tweetnum: ",len(data)
 	if chains==None:
 		chains = {}
@@ -12,7 +15,20 @@ def readInData(user,data):
 		chains = ast.literal_eval(chains)
 
 	chains_plus_additions = joiner(data,chains,True)
-	r.set(user+'_mainchains',str(chains_plus_additions))
+	if not pos:
+		r.set(user+'_mainchains',str(chains_plus_additions))
+	else:
+		r.set(user + '_poschains_'+str(pos_len),str(chains_plus_additions))
+
+def readInPOSData(name, posses):
+	for p in posses:
+		readInData(name, posses[p], True, p)
+	sumposses = []
+	for type in posses:
+		for sent in posses[type]:
+			sumposses.append(sent)
+		print sumposses
+	readInData(name, sumposses, True, 'sum')
 
 def joiner(tweets,chain_dic,allow_dupes=True):
 	sentances = ['<start> ' +tweet+' <stop>' for tweet in tweets if tweet.split()>2]
