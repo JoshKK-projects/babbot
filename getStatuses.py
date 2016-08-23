@@ -11,8 +11,11 @@ def getAllUserTwits(user_name):
 		print status.text.lower()
 		twitlist.append(status.text.lower())
 	posses = synsets.synoms(twitlist)
+	synsets.buildDict(user_name,twitlist)
 	chainer.readInPOSData(user_name,posses)
-	# chainer.readInData(user_name,twitlist)
+	chainer.readInData(user_name,twitlist)
+
+
 def limiter(cursor):
 	while True:
 		try:

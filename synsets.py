@@ -1,15 +1,14 @@
-from nltk.corpus import wordnet as wn
-from nltk.wsd import lesk
 import nltk
 import re
-import ngrammer
-import chainer
+import config
+import ast
+r= config.r
 
 def synoms(lines):
 	words_by_len = {}
 	for line in lines:
-		line = re.sub(r'^\s+','',line);
-		line = re.sub(r'([^\s\w]|_)+','',line)
+		# line = re.sub(r'^\s+','',line);
+		# line = re.sub(r'([^\s\w]|_)+','',line)
 		posses =  [n[1] for n in nltk.pos_tag(nltk.word_tokenize(line))]
 		pos_len = len(posses)
 		if pos_len in words_by_len:
@@ -30,26 +29,29 @@ def buildGrammar(words_by_len):
 			for p in words_by_len[i][1:]:
 				gramms[i].append(' '.join(p))
 	return gramms
-			# bigrams = ngrammer.bigram(gramms)
+
+def buildDict(user_name,lines):
+	dict = r.get(user_name+'_POSDictionary')
+	if dict == None:
+		dict = {}
+	else:
+		dict = ast.literal_eval(dict)
+	for line in lines:
+		# line = re.sub(r'^\s+','',line);
+		# line = re.sub(r'([^\s\w]|_)+','',line)
+		word_and_pos = nltk.pos_tag(nltk.word_tokenize(line))
+		for pair in word_and_pos:
+			if pair[1] not in dict:
+				dict[pair[1]] = [pair[0]]
+			else:
+				if pair[0] not in dict[pair[1]]:
+					dict[pair[1]].append(pair[0])
+	r.set(user_name+'_POSDictionary',dict)
+
+
 
 					
 
-
-def getNextGrammarSymbol(prev,new,increment):#like base 26 but on 26 is 00 not 10 
-    if len(prev)<1:
-        if increment:
-            new = new+'A'
-            return new
-        return  new
-    prevLastIndex = len(prev)-1
-    lastCharCode = ord(prev[prevLastIndex])
-    newCharCode = lastCharCode + increment
-    if newCharCode>90:
-        new = 'A' + new 
-        return getNextGrammarSymbol(prev[:prevLastIndex],new,1)
-    else:
-        new = chr(newCharCode) + new
-        return getNextGrammarSymbol(prev[:prevLastIndex],new,0)
 
 
 

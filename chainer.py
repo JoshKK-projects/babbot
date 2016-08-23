@@ -33,7 +33,7 @@ def readInPOSData(name, posses):
 def joiner(tweets,chain_dic,allow_dupes=True):
 	sentances = ['<start> ' +tweet+' <stop>' for tweet in tweets if tweet.split()>2]
 	for sentance in sentances:
-		sentance = re.sub(r"@.*?\s",'',sentance)
+		# sentance = re.sub(r"@.*?\s",'',sentance)
 		tweets = sentance.split()
 		for i in range(0,len(tweets)-2):#creates (a,b):c format
 			key = (tweets[i],tweets[i+1])
@@ -55,15 +55,25 @@ def joiner(tweets,chain_dic,allow_dupes=True):
 def combineChains(key_name1,key_name2,new_profile):
 	obj1 = ast.literal_eval(r.get(key_name1+'_mainchains'))	
 	obj2 = ast.literal_eval(r.get(key_name2+'_mainchains'))
-	keys1 = obj1.keys()
-	keys2 = obj2.keys()	
-	for key in keys2:
-		print 'checking ',key
-		if key in keys1:
-			obj1[key].append(obj2[key])
-		else:
-			obj1[key] = obj2[key]
-	r.set(new_profile+'_mainchains',str(obj1))
+
+	dict1 = ast.literal_eval(r.get(key_name1+'_POSDictionary'))
+	dict2 = ast.literal_eval(r.get(key_name2+'_POSDictionary'))
+
+	arr1 = [obj1,dict1]
+	arr2 = [obj2,dict2]
+
+	for i in range(0,2):
+		keys1 = arr1[i].keys()
+		keys2 = arr2[i].keys()
+		for key in keys2:
+			print 'checking ',key
+			if key in keys1:
+				[arr1[i][key].append(new) for new in arr2[i][key]]
+			else:
+				arr1[i][key] = arr2[i][key]
+
+	r.set(new_profile+'_mainchains',str(arr1[0]))
+	r.set(new_profile + '_POSDictionary', str(arr1[1]))
 
 
 def getChains():
