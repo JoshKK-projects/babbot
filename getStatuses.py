@@ -10,11 +10,7 @@ def getAllUserTwits(user_name):
 		print "gotten " , len(twitlist)
 		print status.text.lower()
 		twitlist.append(status.text.lower())
-	posses = synsets.synoms(twitlist)
-	synsets.buildDict(user_name,twitlist)
-	chainer.readInPOSData(user_name,posses)
-	chainer.readInData(user_name,twitlist)
-
+	chainer.createKeyData(user_name,twitlist)
 
 def limiter(cursor):
 	while True:
@@ -47,9 +43,19 @@ def getTrendingByLocation(location):#array give
 	# 	 query.append(trend['query'][3:])
 	r.setex(location+'_Trends', query, 6000)
 	return query
-def getTrendingTweetsByTrend(trend):
-	for tweet in tweepy.Cursor(api.search, q=trend,show_user=True).items(100):
+def getTrendingTweetsByTrend(trend,get_max=2700):
+	print trend
+	counter = 0
+	tweets = []
+	for tweet in limiter(tweepy.Cursor(api.search, q=trend,show_user=True).items()):
 		print tweet.text
+		tweets.append(tweet.text)
+		counter = counter + 1
+		print counter
+		if counter == get_max:
+			break
+	chainer.createKeyData(trend,tweets)
+
 def PickATrend(location):
 	trends = getTrendingByLocation(location)
 	trend = random.choice(trends)

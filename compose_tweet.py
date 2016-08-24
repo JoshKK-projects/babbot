@@ -28,7 +28,8 @@ def compTweets(user_name,num,byPOS=None):
 				append = random.choice(append)
 			tweet+=' '+append
 		if(len(tweet)>45):
-			if(sameMargin>=len(tweet.split(' '))*.6):
+			if(sameMargin>=len(tweet.split(' '))*.8):
+				print "GOTTA REPLACE " + tweet
 				orderedByLen = tweet.split(' ')
 				orderedByLen.sort(key = len)
 				orderedByLen = orderedByLen[::-1]
@@ -37,6 +38,7 @@ def compTweets(user_name,num,byPOS=None):
 					# type = nltk.pos_tag([random.choice(orderedByLen)])[0][1]
 					replace = random.choice(POSDict[type])
 					tweet = tweet.replace(orderedByLen[i],replace)
+				print "NOW IS " + tweet
 			tweet = re.sub(r'apos', "'", tweet)
 			tweet = re.sub(r'quot', "\"", tweet)
 			tweets.append(tweet)
@@ -60,8 +62,8 @@ def comparePast(chain,key_pair,prior_words,tweet,byPOS=None):
 	else:
 		possible_picks = [p for p in chain[key_pair] if len(p)+1+len(tweet)<144]
 	if(len(possible_picks)>prior_words-2):
-		if len(possible_picks)<2:
-			sameMargin += 1
+		if len(set(possible_picks))<2:
+			sameMargin = 1
 		next_pick = random.choice(possible_picks)
 	elif(prior_words>2):
 		if(len(key_pair)>2):
@@ -77,11 +79,13 @@ def comparePast(chain,key_pair,prior_words,tweet,byPOS=None):
 
 def postTweets(profile):
 	while(1):
-		tweet = compTweets(profile,1)[0][:-7]
+		tweet = compTweets(profile,1)[0]
+		print tweet
+		tweet = re.sub("<stop>",'',tweet)
 		print "Attempting tweet: "
 		trim_tweet = tweet[:140]
 		print len(tweet)
 		print trim_tweet
 		time.sleep(5)
 		api.update_status(status=trim_tweet)
-		time.sleep(60*5)
+		time.sleep(60*1)

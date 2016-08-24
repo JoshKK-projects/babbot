@@ -1,5 +1,5 @@
 #http://charlesleifer.com/blog/building-markov-chain-irc-bot-python-and-redis/
-import re, redis, ast,HTMLParser, config
+import re, redis, ast,HTMLParser, config,synsets
 r = config.r
 h=HTMLParser.HTMLParser()
 #longer chains, (a,b,c):d for more accurate stuff
@@ -27,7 +27,6 @@ def readInPOSData(name, posses):
 	for type in posses:
 		for sent in posses[type]:
 			sumposses.append(sent)
-		print sumposses
 	readInData(name, sumposses, True, 'sum')
 
 def joiner(tweets,chain_dic,allow_dupes=True):
@@ -74,6 +73,12 @@ def combineChains(key_name1,key_name2,new_profile):
 
 	r.set(new_profile+'_mainchains',str(arr1[0]))
 	r.set(new_profile + '_POSDictionary', str(arr1[1]))
+
+def createKeyData(keyname,lines):
+	posses = synsets.synoms(lines)
+	synsets.buildDict(keyname, lines)
+	readInPOSData(keyname, posses)
+	readInData(keyname, lines)
 
 
 def getChains():

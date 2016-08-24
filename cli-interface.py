@@ -13,7 +13,8 @@ options = {
     '6': lambda : compose_tweet.postTweets(raw_input()),
     '7': lambda : readTextFile.readFile(raw_input()),
     '8': lambda : getStatuses.getAllUserTwits(raw_input()),
-    '9': lambda : chainer.combineChains(raw_input(),raw_input(),raw_input())
+    '9': lambda : chainer.combineChains(raw_input(),raw_input(),raw_input()),
+    '10': lambda  : getStatuses.getTrendingTweetsByTrend(raw_input(),input())
 }
 print 'Starting'
 while command != 'exit':
@@ -27,6 +28,7 @@ Auto Post Tweets For Profile:6<enter><arg><enter>
 Read In Text File To Create Profile:7<enter><arg><enter>
 Get All Tweets For User:8<enter><arg><enter>
 Combine Personalities:9<enter><personality><enter><personality><enter><new_user><enter>
+Create Profile From Tweets By Tag:10<enter><tag><enter><tweet_num - 2690 is 1 req and some safty><enter>
 Exit:exit"""+sep
    	command = raw_input()
    	if(command in options):

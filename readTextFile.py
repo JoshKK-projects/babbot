@@ -13,8 +13,4 @@ def readFile(filename,skype=False):
 	if(skype):
 		lines = [h.unescape(unicode(line.lower(),'utf-8')) for line in lines]
 	#gotta normalize this stuff
-	posses = synsets.synoms(lines)#lil extra prep for pure POS data
-	synsets.buildDict(filename,lines)
-
-	chainer.readInPOSData(filename, posses)
-	chainer.readInData(filename,lines)
+	chainer.createKeyData(filename,lines)
