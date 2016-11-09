@@ -30,7 +30,7 @@ def apiSetTrendingLocations():
 	for t in trends:
 		r.set('Trend_'+t['name'],t['woeid'])
 
-def getTrendingByLocation(location):#array give
+def getTrendingByLocation(location='United States'):#array give
 	query = r.get(location+'_Trends')
 	if query != None:
 		return ast.literal_eval(query)
@@ -60,4 +60,3 @@ def PickATrend(location):
 	trends = getTrendingByLocation(location)
 	trend = random.choice(trends)
 	getTrendingTweetsByTrend(trend)
-

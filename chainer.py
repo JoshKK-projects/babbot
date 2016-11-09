@@ -32,6 +32,7 @@ def readInPOSData(name, posses):
 def joiner(tweets,chain_dic,allow_dupes=True):
 	sentances = ['<start> ' +tweet+' <stop>' for tweet in tweets if tweet.split()>2]
 	for sentance in sentances:
+		print sentance
 		# sentance = re.sub(r"@.*?\s",'',sentance)
 		tweets = sentance.split()
 		for i in range(0,len(tweets)-2):#creates (a,b):c format

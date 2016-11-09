@@ -6,10 +6,10 @@ def readFile(filename,skype=False):
 	#hella redundant
 	lines = re.sub(r'(http|www).* ','',lines)
 	lines = re.sub(r'^\s+', '', lines)
-	lines = re.sub(r'([^\s\w]|_)+', '', lines)
+	# lines = re.sub(r'([^\s\w]|_)+', '', lines)
 	lines = re.sub(r"@.*?\s\"", '', lines)
 	lines = lines.lower()
-	lines = re.split(r'[!.?\n]',lines)
+	lines = re.split('[.?!]',lines)
 	if(skype):
 		lines = [h.unescape(unicode(line.lower(),'utf-8')) for line in lines]
 	#gotta normalize this stuff
